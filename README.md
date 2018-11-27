@@ -10,4 +10,4 @@ The list of students working on this project:
   - Carolina Lopes
   - Daniel Valente
   - Diogo Silva
-  - Pedro Monteiro
+  - João Monteiro
