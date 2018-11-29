@@ -1,7 +1,8 @@
+set /p message=Select Message: 
 echo "Updating local repo"
 git pull origin master
 
-echo "Sending files with message $1"
+echo "Sending files with message %message%"
 git add .
-git commit -m "$1"
+git commit -m %message%
 git push origin master
