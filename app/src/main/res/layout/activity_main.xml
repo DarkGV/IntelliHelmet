@@ -10,11 +10,11 @@
         android:id="@+id/my_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/topBarColor"
+        android:background="@color/topBarAndMenu"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:titleTextColor="@color/iconColor"
+        app:titleTextColor="@color/icons"
         app:navigationIcon="@drawable/ic_menu"
         app:navigationContentDescription="Navigation button description">
 
