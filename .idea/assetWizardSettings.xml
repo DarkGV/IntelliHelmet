@@ -19,8 +19,8 @@
                                   <option name="values">
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\ASUS\Desktop\menu.png" />
-                                      <entry key="outputName" value="ic_share" />
+                                      <entry key="imageAsset" value="C:\Users\ASUS\Desktop\baseline_help_outline_white_18dp.png" />
+                                      <entry key="outputName" value="ic_help" />
                                       <entry key="theme" value="HOLO_DARK" />
                                     </map>
                                   </option>
