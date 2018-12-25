@@ -3,18 +3,5 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-
-    <color name="topBarAndMenu">#00BCD4</color>
-    <color name="pannelTitle">#000000</color>
-    <color name="icons">#FFFFFF</color>
-    
-    <color name="redButtons">#FF0000</color>
-    <color name="blueButtons">#00BCD4</color>
-
-    <color name="Error">#FF0000</color>
-    
-    <color name="tagsWhite">#FFFFFF</color>
-    <color name="tagsGrey">#808080</color>
-    <color name="tagsBlue">#808080</color>
-
+    <color name="colorPrincipal">#39C5C5</color>
 </resources>
