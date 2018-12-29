@@ -1,5 +1,9 @@
 package pt.ubi.di.pmd.intellihelmet20;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,8 +21,24 @@ import android.widget.Toast;
 public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
+    BluetoothConnection oTM;
+    private static boolean serviceRunning = false;
 
-    @Override
+    private ServiceConnection mConnection = new ServiceConnection () {
+        @Override
+        public void onServiceConnected(ComponentName className, IBinder service )
+        {
+            BluetoothConnection.BluetoothComm binder=(BluetoothConnection.BluetoothComm) service ;
+            oTM = binder.getService();
+            Main.setRunning();
+        }
+
+        @Override public void onServiceDisconnected (ComponentName arg0)
+        { serviceRunning = false ; }
+    };
+
+
+        @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -36,15 +56,22 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
         toogle.syncState();
 
         if (savedInstanceState == null) {
+            HomeFragment home = new HomeFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                    new PessoaFragment()).commit();
-            navigationView.setCheckedItem(R.id.nav_pessoa);
+                    home).commit();
+            home.recvService(mConnection);
+            navigationView.setCheckedItem(R.id.nav_home);
         }
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()){
+            case R.id.nav_home:
+                HomeFragment home = new HomeFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, home).commit();
+                home.recvService(mConnection);
+                break;
             case R.id.nav_pessoa:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PessoaFragment()).commit();
                 break;
@@ -71,5 +98,13 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
         } else {
             super.onBackPressed();
         }
+    }
+
+    public static boolean isServiceRunning(){
+            return serviceRunning;
+    }
+
+    public static void setRunning(){
+            serviceRunning = true;
     }
 }
