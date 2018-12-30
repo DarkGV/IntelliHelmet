@@ -4,96 +4,90 @@ import android.app.Service;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.TextView;
+
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.Set;
 
 public class BluetoothConnection extends Service {
 
-    TextView name, mac;
-    Boolean result= false;
-    BluetoothSocket socket;
-    BluetoothDevice dev;
-    DataInputStream dataInputStream;
-    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
-
-        public boolean createBond(BluetoothDevice btDevice)
-                throws Exception {
-            Class class1 = Class.forName("android.bluetooth.BluetoothDevice");
-            Method createBondMethod = class1.getMethod("createBond");
-            Boolean returnValue = (Boolean) createBondMethod.invoke(btDevice);
-            return returnValue.booleanValue();
-        }
-
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (BluetoothDevice.ACTION_FOUND.equals(action)) {
-                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                Log.d("DEVICE", device.getName());
-                if (device.getName().equals("raspberrypi")) {
-                    Log.d("DEVICE", "ENTERED");
-                    try {
-                        result = createBond(device);
-                        if (result) {
-                            Log.d("DEVICE", "WILL CONNECT");
-                            socket = device.createInsecureRfcommSocketToServiceRecord(device.getUuids()[0].getUuid());
-                            socket.connect();
-                        }
-                        Log.d("DEVICE", String.valueOf(result));
-                        dev = device;
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    };
-
-    private final IBinder comm = new BluetoothComm();
-
-    public class BluetoothComm extends Binder{
-        BluetoothConnection getService(){
-            return BluetoothConnection.this;
-        }
-    }
+    private static boolean serviceRunning = false;
+    private BluetoothSocket socket;
+    private static DataInputStream dataInputStream = null;
+    private static DataOutputStream dataOutputStream = null;
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d("BLUETOOTHSERV", "I'm Running!!");
+        return null;
+    }
+
+    @Override
+    public int onStartCommand (Intent oInt,int flags, int startId){
         BluetoothAdapter myBluetooth = BluetoothAdapter.getDefaultAdapter();
         Set<BluetoothDevice> paired = myBluetooth.getBondedDevices();
         try {
             for (BluetoothDevice d : paired) {
                 //Log.d("DEVICE", d.getName());
                 if (d.getName().equals("raspberrypi") && d.getBondState() == 12) {
-                    //Log.d("DEVICE", "ENTERED");
                     socket = d.createInsecureRfcommSocketToServiceRecord(d.getUuids()[0].getUuid());
                     socket.connect();
                     dataInputStream = new DataInputStream(socket.getInputStream());
-                    //byte[] b = new byte[5];
-                    //dataInputStream.read(b);
-                    //Log.d("DEVICE", "Recebi " + String.valueOf(Float.parseFloat(new String(b))));
+                    dataOutputStream= new DataOutputStream(socket.getOutputStream());
                 }
             }
         } catch (IOException e) {
             System.out.println(e);
         }
-        return comm;
+        serviceRunning = true;
+
+        return START_NOT_STICKY;
     }
 
-    public String getDataFromBluetooth() throws IOException{
-        byte[] b = new byte[5];
-        dataInputStream.read(b);
-        return new String(b);
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        try{
+            dataInputStream.close();
+            socket.close();
+        }catch(IOException e){
+            System.out.println(e);
+        }
+
+        serviceRunning = false;
     }
+
+    public static String[] getDataFromBluetooth() throws IOException{
+        String[] values = new String[3];
+        byte[] b = new byte[5];
+
+        dataOutputStream.write('1');
+
+        dataInputStream.read(b);
+        values[0] = new String(b);
+
+        dataInputStream.read(b);
+        values[1] = new String(b);
+
+        dataInputStream.read(b);
+        values[2] = new String(b);
+
+        Log.d("BLUETOOTHDATA", "Posto -> " + values[0] + "\nTemperatura -> " + values[1] +
+                "\nChoque -> " + values[2]);
+
+        return values;
+    }
+
+
+    public static boolean isRunning(){
+        return serviceRunning;
+    }
+
+
+
 
 }
 

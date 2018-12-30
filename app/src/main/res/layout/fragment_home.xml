@@ -92,11 +92,10 @@
            android:id="@+id/noHelmetError"
            android:layout_width="wrap_content"
            android:layout_height="wrap_content"
-           android:text="Please wear your helmet"
+           android:text="Please connect to the controler"
            android:textSize="30dp"
            android:layout_marginTop="20dp"
-           android:textColor="@color/Error"
-           android:visibility="invisible"/>
+           android:textColor="@color/Error" />
    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
