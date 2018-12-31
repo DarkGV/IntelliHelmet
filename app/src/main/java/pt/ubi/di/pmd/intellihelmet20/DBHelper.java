@@ -38,7 +38,7 @@ public class DBHelper extends SQLiteOpenHelper {
     o int fauxPas serve só para diferenciar os construtores logo qualquer int pode ser lá inserido
      */
 
-    public DBHelper(Context context){
+    public DBHelper(PessoaFirstTime context){  // mudei para PessoaFirstTime em vez de PessoaFragment
         super(context,DB_MainNAME,null,DB_MainVers);
     }
 

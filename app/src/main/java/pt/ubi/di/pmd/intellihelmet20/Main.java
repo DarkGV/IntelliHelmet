@@ -4,6 +4,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -26,11 +27,23 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
+    final String PREFS_NAME = "MyPreferences"; // sharedPreferences
 
-        @Override
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+
+        if (settings.getBoolean("my_first_time", true)) {
+
+            Intent intent = new Intent(this, PessoaFirstTime.class);
+            startActivity(intent);
+
+            settings.edit().putBoolean("my_first_time", false).commit();
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
