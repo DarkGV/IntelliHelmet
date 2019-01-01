@@ -76,7 +76,9 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db=getWritableDatabase();
         ContentValues cv= new ContentValues();
 
-        if(db.query(M_TABLE_NAME,null ,"name" ,null ,null , null, null).getCount()>0)
+        System.out.println("FDS 1");
+
+        if(db.query(M_TABLE_NAME,null ,"name" ,null ,null , null, null).isNull(0))
             return false;
 
         cv.put("name",name );
@@ -164,7 +166,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getUserInfo(){
         Cursor userInfo;
         SQLiteDatabase db=getReadableDatabase();
-        if(db.query(M_TABLE_NAME,null ,null , null, null, null, null)!=null){
+        if(db.query(M_TABLE_NAME,null ,null , null, null, null, null).equals(null)){
             userInfo=db.query(M_TABLE_NAME,null ,null ,null ,null , null, null);
             userInfo.moveToFirst();
             return userInfo;
