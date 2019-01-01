@@ -24,8 +24,6 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String M_COL6="emTimeSett";
     private static final String M_COL7="sensSensitivSett";
 
-    private static final int DB_SecondVers=1;
-    private static final String DB_SecondNAME="UtilData";
     private static final String S_TABLE_NAME="UserActiv";
     private static final String S_COL1="dia";
     private static final String S_COL2="horas";
@@ -40,10 +38,6 @@ public class DBHelper extends SQLiteOpenHelper {
 
     public DBHelper(PessoaFirstTime context){  // mudei para PessoaFirstTime em vez de PessoaFragment
         super(context,DB_MainNAME,null,DB_MainVers);
-    }
-
-    public DBHelper(Context context,int fauxPas){
-        super(context,DB_SecondNAME,null,DB_SecondVers);
     }
 
     /*
@@ -170,7 +164,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getUserInfo(){
         Cursor userInfo;
         SQLiteDatabase db=getReadableDatabase();
-        if(db.query(M_TABLE_NAME,null ,null , null, null, null, null).getCount()>0){
+        if(db.query(M_TABLE_NAME,null ,null , null, null, null, null)!=null){
             userInfo=db.query(M_TABLE_NAME,null ,null ,null ,null , null, null);
             userInfo.moveToFirst();
             return userInfo;
