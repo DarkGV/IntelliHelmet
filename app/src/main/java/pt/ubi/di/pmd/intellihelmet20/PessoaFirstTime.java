@@ -50,7 +50,7 @@ public class PessoaFirstTime extends Activity{
         de a alterar
          */
 
-        if(oCstartingData!=null){
+        if(oCstartingData.equals(null)){
             oETnome.setText(oCstartingData.getString(0), TextView.BufferType.EDITABLE);
             checkBTinDB();
             oETmainCont.setText(oCstartingData.getString(2), TextView.BufferType.EDITABLE);
@@ -86,7 +86,7 @@ public class PessoaFirstTime extends Activity{
                         Toast.makeText(PessoaFirstTime.this,"Erro:Falta preencher,pelo menos, 1 campo", Toast.LENGTH_LONG).show();
                     else
                         //Este if serve para verificar se o user existe ou não;
-                        if(oCtemp!=null){
+                        if(oCtemp.equals(null)){
                             try{
                                 oDBH.addUserInfo(sName,sBloodTP ,lMainCont ,lBackUP ,lID);
                             }catch(Exception e){
