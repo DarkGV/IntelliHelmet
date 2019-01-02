@@ -2,10 +2,14 @@ package pt.ubi.di.pmd.intellihelmet20;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -41,10 +45,10 @@ public class HomeFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_home, container, false);
         txtTemp = view.findViewById(R.id.tempLabel);
-        warning=view.findViewById(R.id.noHelmetError);
+        warning = view.findViewById(R.id.noHelmetError);
         timeLabel = view.findViewById(R.id.wearTimeLabel);
         final Switch startService = view.findViewById(R.id.StartService);
-        if(BluetoothConnection.isRunning())
+        if (BluetoothConnection.isRunning())
             startService.setChecked(true);
 
         else
@@ -59,7 +63,7 @@ public class HomeFragment extends Fragment {
                     warning.setVisibility(View.VISIBLE);
                 } else {
                     getActivity().startService(new Intent(getActivity(), BluetoothConnection.class));
-                    communicationThread =new CommunicationThread();
+                    communicationThread = new CommunicationThread();
                     communicationThread.start();
                     warning.setVisibility(View.INVISIBLE);
 
@@ -77,16 +81,17 @@ public class HomeFragment extends Fragment {
         private CountDownTimer timer;
         private boolean helmetOn = false;
 
-        public void run(){
-            while(!BluetoothConnection.isRunning());
 
-            while(true){
+        public void run() {
+            while (!BluetoothConnection.isRunning()) ;
+
+            while (true) {
                 try {
                     final String[] temp = BluetoothConnection.getDataFromBluetooth();
                     commHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            if(Integer.valueOf(temp[0])== 0 && temp[2].equals("shock") ){
+                            if (Integer.valueOf(temp[0]) == 0 && temp[2].equals("shock")) {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                                 builder.setPositiveButton("I'm ok", new DialogInterface.OnClickListener() {
                                     @Override
@@ -102,12 +107,16 @@ public class HomeFragment extends Fragment {
                                 timer = new CountDownTimer(10000, 1000) {
                                     @Override
                                     public void onTick(long millisUntilFinished) {
-                                        alerta.setMessage("SHOCK, please don´t take of your helmet.\nPress OK to cancel this message!" + "00:"+ (millisUntilFinished/1000));
+                                        alerta.setMessage("SHOCK, please don´t take of your helmet.\nPress OK to cancel this message!" + "00:" + (millisUntilFinished / 1000));
                                     }
 
                                     @Override
                                     public void onFinish() {
                                         //ENVIA MENSAGEM
+                                        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+                                        LocationListener locationListener = new MyLocationListener();
+                                        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                             try {
                                                 DBHelper dbHelper = new DBHelper(getActivity());
                                                 SQLiteDatabase db = dbHelper.getReadableDatabase();
@@ -115,6 +124,26 @@ public class HomeFragment extends Fragment {
                                                 if(oInfo.moveToFirst()){
                                                     SmsManager smsManager = SmsManager.getDefault();
                                                     smsManager.sendTextMessage(String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL3))), null, "Houve um acidente!!\nNome: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL1))+"\nTipo de Sangue: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL2))+"\nNumero CC"+ String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL5))), null, null);
+                                                    Toast.makeText(getActivity(), "Message Sent", Toast.LENGTH_LONG).show();
+                                                }
+
+                                            } catch (Exception ex) {
+                                                Toast.makeText(getActivity(), ex.toString(),
+                                                        Toast.LENGTH_LONG).show();
+                                                Log.d("SMSSENDER", String.valueOf(ex));
+                                            }
+                                            return;
+                                        }
+                                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
+
+
+                                            try {
+                                                DBHelper dbHelper = new DBHelper(getActivity());
+                                                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                                                Cursor oInfo = db.query(dbHelper.M_TABLE_NAME, new String[] {"*"}, null, null, null, null, null);
+                                                if(oInfo.moveToFirst()){
+                                                    SmsManager smsManager = SmsManager.getDefault();
+                                                    smsManager.sendTextMessage(String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL3))), null, "Houve um acidente!!\nNome: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL1))+"\nTipo de Sangue: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL2))+"\nNumero CC"+ String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL5))) + MyLocationListener.getLocation(), null, null);
                                                     Toast.makeText(getActivity(), "Message Sent", Toast.LENGTH_LONG).show();
                                                 }
 

@@ -37,7 +37,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.SEND_SMS}, 1);
+        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
