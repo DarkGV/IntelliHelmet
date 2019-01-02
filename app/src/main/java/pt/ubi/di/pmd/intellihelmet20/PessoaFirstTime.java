@@ -68,9 +68,9 @@ public class PessoaFirstTime extends Activity{
                 int iBloodRPid=oRGbloodTp.getCheckedRadioButtonId();
                 oRGtemp=(RadioButton)oRGbloodTp.findViewById(iBloodRPid);
                 String sBloodTP=oRGtemp.getText().toString();
-                long lMainCont=Long.valueOf(oETmainCont.getText().toString());
-                long lBackUP=Long.valueOf(oETbackUpCont.getText().toString());
-                long lID=Long.valueOf(oETidCard.getText().toString());
+                int lMainCont= Integer.parseInt(String.valueOf(oETmainCont.getText()));
+                int lBackUP=Integer.parseInt(String.valueOf(oETbackUpCont.getText().toString()));
+                int lID=Integer.parseInt(String.valueOf(oETidCard.getText().toString()));
 
                 /*
                 Dentro deste if, verifico primeiro se existe ou não user na DB, caso não, chamo o
@@ -93,7 +93,7 @@ public class PessoaFirstTime extends Activity{
                                 e.printStackTrace();
                             }
                         }
-                        else if(oDBH.alterUserInfo(sName,sBloodTP ,lMainCont ,lBackUP ,lID , 0, 0))
+                        else if(oDBH.alterUserInfo(sName,sBloodTP ,lMainCont ,lBackUP ,lID))
                             Toast.makeText(PessoaFirstTime.this,"Informação Registada com sucesso", Toast.LENGTH_LONG).show();
                         else
                             Toast.makeText(PessoaFirstTime.this,"Erro:Não foi possivel registar a informação", Toast.LENGTH_LONG).show();
