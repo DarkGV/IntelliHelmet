@@ -21,8 +21,6 @@ public class DBHelper extends SQLiteOpenHelper {
     private static final String M_COL3="mainContact";
     private static final String M_COL4="backUpContact";
     private static final String M_COL5="userIDNumb";
-    private static final String M_COL6="emTimeSett";
-    private static final String M_COL7="sensSensitivSett";
 
     private static final String S_TABLE_NAME="UserActiv";
     private static final String S_COL1="dia";
@@ -46,20 +44,20 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db){
-        db.execSQL("CREATE TABLE "+M_TABLE_NAME+"("+M_COL1+" TEXT PRIMARY KEY, "+M_COL2+" TEXT, "+M_COL3+" LONG, "+M_COL4+" LONG, "+M_COL5+" LONG, "+M_COL6+" INT, "+M_COL7+" INT);");
-        db.execSQL("CREATE TABLE "+S_TABLE_NAME+"( tripId INTEGER PRIMARY KEY AUTOINCREMENT, "+S_COL1+" TEXT, "+S_COL2+" TEXT, "+S_COL3+" TEXT);");
+        db.execSQL("CREATE TABLE "+M_TABLE_NAME+"("+M_COL1+" VARCHAR(30) PRIMARY KEY, "+M_COL2+" VARCHAR(30), "+M_COL3+" INT, "+M_COL4+" INT, "+M_COL5+" INT);");
+        db.execSQL("CREATE TABLE "+S_TABLE_NAME+"( tripId INTEGER PRIMARY KEY AUTOINCREMENT, "+S_COL1+" VARCHAR(30), "+S_COL2+" VARCHAR(30), "+S_COL3+" VARCHAR(30));");
     }
 
 
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){
         if(dbChoice==1) {
             db.execSQL("DROP TABLE IF EXISTS " + M_TABLE_NAME + " ;");
-            db.execSQL("CREATE TABLE " + M_TABLE_NAME + "(" + M_COL1 + " TEXT PRIMARY KEY, " + M_COL2 + " TEXT, " + M_COL3 + " INT, " + M_COL4 + " INT, " + M_COL5 + " INT, " + M_COL6 + " INT, " + M_COL7 + " INT);");
+            db.execSQL("CREATE TABLE " + M_TABLE_NAME + "(" + M_COL1 + " VARCHAR(30) PRIMARY KEY, " + M_COL2 + " VARCHAR(30), " + M_COL3 + " INT, " + M_COL4 + " INT, " + M_COL5 + " INT);");
             return;
         }
         else if(dbChoice==2){
             db.execSQL("DROP TABLE IF EXISTS "+S_TABLE_NAME+" ;");
-            db.execSQL("CREATE TABLE "+S_TABLE_NAME+"("+S_COL1+" TEXT PRIMARY KEY, "+S_COL2+" TEXT, "+S_COL3+" TEXT);");
+            db.execSQL("CREATE TABLE "+S_TABLE_NAME+"("+S_COL1+" VARCHAR(30) PRIMARY KEY, "+S_COL2+" VARCHAR(30), "+S_COL3+" VARCHAR(30));");
             return;
         }
         else
@@ -72,7 +70,7 @@ public class DBHelper extends SQLiteOpenHelper {
     sensor
      */
 
-    public boolean addUserInfo(String name,String bloodType,long mainContact,long backupContact,long userIDNumb){
+    public boolean addUserInfo(String name,String bloodType,int mainContact,int backupContact,int userIDNumb){
         SQLiteDatabase db=getWritableDatabase();
         ContentValues cv= new ContentValues();
 
@@ -86,8 +84,6 @@ public class DBHelper extends SQLiteOpenHelper {
         cv.put("mainContact",mainContact);
         cv.put("backUpContact",backupContact);
         cv.put("userIDNumb",userIDNumb);
-        cv.put("emTimeSett",30);
-        cv.put("sensSensitivSett",75);
 
         if(db.insert(M_TABLE_NAME,null ,cv )>0)
             return true;
@@ -100,8 +96,8 @@ public class DBHelper extends SQLiteOpenHelper {
     caso os if são para verificar que informação vai ser alterada.
      */
 
-    public boolean alterUserInfo(String name,String bloodType,long mainContact,long backupContact,long userIDNumb,int emTimeSett,int sensSensitivSett){
-        if(name.equals(null) && bloodType.equals(null) && mainContact==0 && backupContact==0 && userIDNumb==0 && emTimeSett==0 && sensSensitivSett==0)
+    public boolean alterUserInfo(String name,String bloodType,int mainContact,int backupContact,int userIDNumb){
+        if(name.equals(null) && bloodType.equals(null) && mainContact==0 && backupContact==0 && userIDNumb==0 )
             return false;
 
         SQLiteDatabase db=getWritableDatabase();
@@ -122,11 +118,6 @@ public class DBHelper extends SQLiteOpenHelper {
             if (userIDNumb != 0)
                 cv.put("userIDNumb", userIDNumb);
 
-            if (emTimeSett != 0)
-                cv.put("emTimeSett", emTimeSett);
-
-            if (sensSensitivSett != 0)
-                cv.put("sensSensitivSett", sensSensitivSett);
 
             db.update("User", cv, null, null);
             return true;
