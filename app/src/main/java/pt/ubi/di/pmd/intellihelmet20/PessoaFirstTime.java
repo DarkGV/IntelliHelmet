@@ -48,19 +48,27 @@ public class PessoaFirstTime extends Activity {
         oCstartingData = oDBH.getUserInfo();
         Context oContext = this;
         oButtOk.setOnClickListener(new View.OnClickListener() {
-
+        SharedPreferences oSP=getSharedPreferences(Main.PREFS_NAME, 0);;
             @Override
             public void onClick(View v) {
-                SQLiteDatabase dbaux= oDBH.getWritableDatabase();
-                RadioButton oBloodType = (RadioButton) oRGbloodTp.findViewById(oRGbloodTp.getCheckedRadioButtonId());
-                String stmt = "INSERT INTO " + oDBH.M_TABLE_NAME + " VALUES ('" +
-                        oETnome.getText().toString() +
-                        "', '" + oBloodType.getText().toString() +
-                        "', " + oETmainCont.getText().toString() +
-                        ", " + oETbackUpCont.getText().toString() +
-                        ", " + oETidCard.getText().toString() +");";
+                SQLiteDatabase dbaux = oDBH.getWritableDatabase();
+                if(oSP.getBoolean("my_first_time",true)) {
 
-                dbaux.execSQL(stmt);
+                    RadioButton oBloodType = (RadioButton) oRGbloodTp.findViewById(oRGbloodTp.getCheckedRadioButtonId());
+                    String stmt = "INSERT INTO " + oDBH.M_TABLE_NAME + " VALUES ('" +
+                            oETnome.getText().toString() +
+                            "', '" + oBloodType.getText().toString() +
+                            "', " + oETmainCont.getText().toString() +
+                            ", " + oETbackUpCont.getText().toString() +
+                            ", " + oETidCard.getText().toString() + ");";
+
+                    dbaux.execSQL(stmt);
+                }
+                else{
+                    String stmt= "UPDATE User SET mainContact="+ oETmainCont.getText().toString()+", backUpContact="+ oETbackUpCont.getText().toString()+" WHERE name='"+ oETnome.getText().toString()+"';";
+                    dbaux.execSQL(stmt);
+
+                }
 
                 Toast.makeText(getApplication().getBaseContext(), "AHAHAAAAHAHA", Toast.LENGTH_SHORT).show();
                 SharedPreferences settings = getSharedPreferences(Main.PREFS_NAME, 0);
