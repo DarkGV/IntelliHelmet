@@ -15,17 +15,17 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final int DB_MainVers=1;
     private static final String DB_MainNAME="UserInfo";
-    private static final String M_TABLE_NAME="User";
-    private static final String M_COL1="name";
-    private static final String M_COL2="bloodType";
-    private static final String M_COL3="mainContact";
-    private static final String M_COL4="backUpContact";
-    private static final String M_COL5="userIDNumb";
+    protected static final String M_TABLE_NAME="User";
+    protected static final String M_COL1="name";
+    protected static final String M_COL2="bloodType";
+    protected static final String M_COL3="mainContact";
+    protected static final String M_COL4="backUpContact";
+    protected static final String M_COL5="userIDNumb";
 
-    private static final String S_TABLE_NAME="UserActiv";
-    private static final String S_COL1="dia";
-    private static final String S_COL2="horas";
-    private static final String S_COL3="temperatura";
+    protected static final String S_TABLE_NAME="UserActiv";
+    protected static final String S_COL1="dia";
+    protected static final String S_COL2="horas";
+    protected static final String S_COL3="temperatura";
 
     private static int dbChoice=0;
 
@@ -34,7 +34,7 @@ public class DBHelper extends SQLiteOpenHelper {
     o int fauxPas serve só para diferenciar os construtores logo qualquer int pode ser lá inserido
      */
 
-    public DBHelper(PessoaFirstTime context){  // mudei para PessoaFirstTime em vez de PessoaFragment
+    public DBHelper(Context context ){  // mudei para PessoaFirstTime em vez de PessoaFragment
         super(context,DB_MainNAME,null,DB_MainVers);
     }
 

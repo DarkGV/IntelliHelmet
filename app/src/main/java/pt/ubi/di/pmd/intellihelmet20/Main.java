@@ -27,7 +27,7 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
     private DrawerLayout drawer;
     private NavigationView navigationView;
-    final String PREFS_NAME = "MyPreferences"; // sharedPreferences
+    protected static final String PREFS_NAME = "MyPreferences"; // sharedPreferences
 
 
     @Override
@@ -41,8 +41,6 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
 
             Intent intent = new Intent(this, PessoaFirstTime.class);
             startActivity(intent);
-
-            settings.edit().putBoolean("my_first_time", false).commit();
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -72,7 +70,10 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
                 if(!BluetoothConnection.isRunning()) getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
                 break;
             case R.id.nav_pessoa:
-                if(!BluetoothConnection.isRunning()) getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new PessoaFragment()).commit();
+                if(!BluetoothConnection.isRunning()) {
+                    Intent oIntent = new Intent(this, PessoaFirstTime.class);
+                    startActivity(oIntent);
+                }
                 else{
                     Toast.makeText(this, "You cannot change view", Toast.LENGTH_SHORT).show();
                     // Vê se consegues com que isto mude o checked item para outro sff.
