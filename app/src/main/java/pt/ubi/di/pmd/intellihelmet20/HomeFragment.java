@@ -3,12 +3,15 @@ package pt.ubi.di.pmd.intellihelmet20;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.telephony.SmsManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,6 +105,24 @@ public class HomeFragment extends Fragment {
                                     @Override
                                     public void onFinish() {
                                         //ENVIA MENSAGEM
+                                            try {
+                                                String phoneNo = null;
+                                                DBHelper dbHelper = new DBHelper(getActivity());
+                                                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                                                Cursor oInfo = db.query(dbHelper.M_TABLE_NAME, new String[] {dbHelper.M_COL3}, null, null, null, null, null);
+                                                if(oInfo.moveToFirst())
+                                                    phoneNo = String.valueOf(oInfo.getInt(0));
+                                                if(phoneNo != null){
+                                                    SmsManager smsManager = SmsManager.getDefault();
+                                                    smsManager.sendTextMessage(phoneNo, null, "Houve um acidente!!!!", null, null);
+                                                    Toast.makeText(getActivity(), "Message Sent", Toast.LENGTH_LONG).show();
+                                                }
+
+                                            } catch (Exception ex) {
+                                                Toast.makeText(getActivity(), "HOUVE UM ERRO DURANTE O ENVIO",
+                                                        Toast.LENGTH_LONG).show();
+                                                ex.printStackTrace();
+                                            }
                                         alerta.dismiss();
                                     }
                                 }.start();
