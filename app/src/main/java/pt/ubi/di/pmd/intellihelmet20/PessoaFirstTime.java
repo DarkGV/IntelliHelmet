@@ -40,7 +40,6 @@ public class PessoaFirstTime extends Activity {
         oETnome = (EditText) findViewById(R.id.NameField);
         oRGbloodTp = (RadioGroup) findViewById(R.id.BloodChoice);
         oETmainCont = (EditText) findViewById(R.id.MainContField);
-        oETbackUpCont = (EditText) findViewById(R.id.BackUpField);
         oETidCard = (EditText) findViewById(R.id.IDField);
         oButtOk = (Button) findViewById(R.id.SaveInfoButt);
         oButtOk.setVisibility(View.VISIBLE);
@@ -59,7 +58,6 @@ public class PessoaFirstTime extends Activity {
                             oETnome.getText().toString() +
                             "', '" + oBloodType.getText().toString() +
                             "', " + oETmainCont.getText().toString() +
-                            ", " + oETbackUpCont.getText().toString() +
                             ", " + oETidCard.getText().toString() + ");";
 
                     dbaux.execSQL(stmt);
@@ -69,8 +67,7 @@ public class PessoaFirstTime extends Activity {
                     dbaux.execSQL(stmt);
 
                 }
-
-                Toast.makeText(getApplication().getBaseContext(), "AHAHAAAAHAHA", Toast.LENGTH_SHORT).show();
+                
                 SharedPreferences settings = getSharedPreferences(Main.PREFS_NAME, 0);
                 settings.edit().putBoolean("my_first_time", false).commit();
                 ((PessoaFirstTime) oContext).finish();
@@ -87,8 +84,7 @@ public class PessoaFirstTime extends Activity {
             oETnome.setEnabled(false);
             checkBTinDB();
             oETmainCont.setText(oCstartingData.getString(2), TextView.BufferType.EDITABLE);
-            oETbackUpCont.setText(oCstartingData.getString(3), TextView.BufferType.EDITABLE);
-            oETidCard.setText(oCstartingData.getString(4), TextView.BufferType.EDITABLE);
+            oETidCard.setText(oCstartingData.getString(3), TextView.BufferType.EDITABLE);
             oETidCard.setEnabled(false);
         }
     }

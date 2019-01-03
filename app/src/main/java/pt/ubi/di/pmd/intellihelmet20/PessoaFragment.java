@@ -37,10 +37,8 @@ public class PessoaFragment extends Fragment {
         oETnome=(EditText)view.findViewById(R.id.NameField);
         oRGbloodTp=(RadioGroup)view.findViewById(R.id.BloodChoice);
         oETmainCont=(EditText)view.findViewById(R.id.MainContField);
-        oETbackUpCont=(EditText)view.findViewById(R.id.BackUpField);
         oETidCard=(EditText)view.findViewById(R.id.IDField);
         Toast.makeText(getActivity(), "TEST", Toast.LENGTH_SHORT).show();
-        oDBH=new DBHelper(getActivity());
 
         oETnome.setText("AAAAAHHHHHHHHHHHHHHHH");
 

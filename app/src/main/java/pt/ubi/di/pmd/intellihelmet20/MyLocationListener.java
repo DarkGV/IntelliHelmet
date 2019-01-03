@@ -3,6 +3,7 @@ package pt.ubi.di.pmd.intellihelmet20;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 public class MyLocationListener implements LocationListener {
@@ -15,8 +16,10 @@ public class MyLocationListener implements LocationListener {
         String longitude = "Longitude: " + loc.getLongitude();
         String latitude = "Latitude: " + loc.getLatitude();
 
-        String s = "\nlongitude: " + longitude + "\n" + "latitude: " + latitude + "\n" ;
+        String s = "\n" + longitude + "\n" + latitude + "\n" ;
         stringLongLat = s;
+
+        Log.d("LOCATIONHELMET", s);
 
     }
 

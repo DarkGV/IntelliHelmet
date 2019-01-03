@@ -2,12 +2,16 @@ package pt.ubi.di.pmd.intellihelmet20;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -30,6 +34,8 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 
 
@@ -80,6 +86,7 @@ public class HomeFragment extends Fragment {
         private AlertDialog alerta;
         private CountDownTimer timer;
         private boolean helmetOn = false;
+        private String onMap = "http://www.google.com/maps/place/";
 
 
         public void run() {
@@ -113,9 +120,11 @@ public class HomeFragment extends Fragment {
                                     @Override
                                     public void onFinish() {
                                         //ENVIA MENSAGEM
-                                        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
 
+                                        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
                                         LocationListener locationListener = new MyLocationListener();
+
+
                                         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                                             try {
                                                 DBHelper dbHelper = new DBHelper(getActivity());
@@ -123,6 +132,7 @@ public class HomeFragment extends Fragment {
                                                 Cursor oInfo = db.query(dbHelper.M_TABLE_NAME, new String[] {"*"}, null, null, null, null, null);
                                                 if(oInfo.moveToFirst()){
                                                     SmsManager smsManager = SmsManager.getDefault();
+                                                    smsManager.sendTextMessage(String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL3))), null, "Houve um acidente!!\nNome: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL1))+"\nTipo de Sangue: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL2))+"\nNumero CC"+ String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL5))), null, null);
                                                     smsManager.sendTextMessage(String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL3))), null, "Houve um acidente!!\nNome: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL1))+"\nTipo de Sangue: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL2))+"\nNumero CC"+ String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL5))), null, null);
                                                     Toast.makeText(getActivity(), "Message Sent", Toast.LENGTH_LONG).show();
                                                 }
@@ -134,16 +144,25 @@ public class HomeFragment extends Fragment {
                                             }
                                             return;
                                         }
-                                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10, locationListener);
 
-
+                                        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10, 100, locationListener);
+                                        Location l = null;
+                                        for(String provider: locationManager.getAllProviders()) {
+                                            l = locationManager.getLastKnownLocation(provider);
+                                            if (l != null)
+                                                break;
+                                        }
                                             try {
                                                 DBHelper dbHelper = new DBHelper(getActivity());
                                                 SQLiteDatabase db = dbHelper.getReadableDatabase();
                                                 Cursor oInfo = db.query(dbHelper.M_TABLE_NAME, new String[] {"*"}, null, null, null, null, null);
                                                 if(oInfo.moveToFirst()){
                                                     SmsManager smsManager = SmsManager.getDefault();
-                                                    smsManager.sendTextMessage(String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL3))), null, "Houve um acidente!!\nNome: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL1))+"\nTipo de Sangue: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL2))+"\nNumero CC"+ String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL5))) + MyLocationListener.getLocation(), null, null);
+                                                    Geocoder geocoder = new Geocoder(getActivity(), Locale.getDefault());
+
+                                                    List<Address> addresses = geocoder.getFromLocation(l.getLatitude(), l.getLongitude(), 1);
+                                                    String fullAddress = addresses.get(0).getAddressLine(0);
+                                                    smsManager.sendTextMessage(String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL3))), null, "Houve um acidente!!\nNome: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL1))+"\nTipo de Sangue: "+oInfo.getString(oInfo.getColumnIndex(dbHelper.M_COL2))+"\nNumero CC: "+ String.valueOf(oInfo.getInt(oInfo.getColumnIndex(dbHelper.M_COL5))) + "\nLocalização: " + onMap + l.getLatitude() + "," + l.getLongitude()  , null, null);
                                                     Toast.makeText(getActivity(), "Message Sent", Toast.LENGTH_LONG).show();
                                                 }
 

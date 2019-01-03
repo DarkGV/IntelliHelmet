@@ -19,7 +19,6 @@ public class DBHelper extends SQLiteOpenHelper {
     protected static final String M_COL1="name";
     protected static final String M_COL2="bloodType";
     protected static final String M_COL3="mainContact";
-    protected static final String M_COL4="backUpContact";
     protected static final String M_COL5="userIDNumb";
 
     protected static final String S_TABLE_NAME="UserActiv";
@@ -44,7 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db){
-        db.execSQL("CREATE TABLE "+M_TABLE_NAME+"("+M_COL1+" VARCHAR(30) PRIMARY KEY, "+M_COL2+" VARCHAR(30), "+M_COL3+" INT, "+M_COL4+" INT, "+M_COL5+" INT);");
+        db.execSQL("CREATE TABLE "+M_TABLE_NAME+"("+M_COL1+" VARCHAR(30) PRIMARY KEY, "+M_COL2+" VARCHAR(30), "+M_COL3+" INT, "+M_COL5+" INT);");
         db.execSQL("CREATE TABLE "+S_TABLE_NAME+"( tripId INTEGER PRIMARY KEY AUTOINCREMENT, "+S_COL1+" VARCHAR(30), "+S_COL2+" VARCHAR(30), "+S_COL3+" VARCHAR(30));");
     }
 
@@ -52,7 +51,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db,int oldVersion,int newVersion){
         if(dbChoice==1) {
             db.execSQL("DROP TABLE IF EXISTS " + M_TABLE_NAME + " ;");
-            db.execSQL("CREATE TABLE " + M_TABLE_NAME + "(" + M_COL1 + " VARCHAR(30) PRIMARY KEY, " + M_COL2 + " VARCHAR(30), " + M_COL3 + " INT, " + M_COL4 + " INT, " + M_COL5 + " INT);");
+            db.execSQL("CREATE TABLE " + M_TABLE_NAME + "(" + M_COL1 + " VARCHAR(30) PRIMARY KEY, " + M_COL2 + " VARCHAR(30), " + M_COL3 + " INT, " + M_COL5 + " INT);");
             return;
         }
         else if(dbChoice==2){

@@ -6,6 +6,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -17,12 +21,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.io.IOException;
 //HELLO
-
 
 
 public class Main extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -37,7 +41,8 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
 
         SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
 
@@ -59,12 +64,14 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+
         if (savedInstanceState == null) {
             HomeFragment home = new HomeFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
                     home).commit();
             navigationView.setCheckedItem(R.id.nav_home);
         }
+
     }
 
     @Override
@@ -89,10 +96,6 @@ public class Main extends AppCompatActivity implements NavigationView.OnNavigati
                     // |-------------------------------------------------------------------------|
                     // change();
                 }
-                break;
-            case R.id.nav_settings:
-                if(!BluetoothConnection.isRunning()) getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
-                else navigationView.setCheckedItem(R.id.nav_home);
                 break;
             case R.id.nav_info:
                 if(!BluetoothConnection.isRunning()) getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new InfoFragment()).commit();
